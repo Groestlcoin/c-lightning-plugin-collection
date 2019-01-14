@@ -10,16 +10,12 @@ Activate the plugin with:
 Call the plugin with: 
 `lightning-cli funds`
 
-The standard unit to depict the funds is set to satoshis. 
+The standard unit to depict the funds is set to gros. 
 The unit can be changed by and arguments after `lightning-cli funds` 
 for each call. It is also possible to change the standard unit when 
 starting lightningd just pass `--funds_display_unit={unit}` where
-unit can be s for satoshi, b for bits, m for milliBitcoin and B for BTC.
+unit can be gro for gro, groestls for groestls, mGRS for milliGroestlcoin and GRS for GRS.
 
-
-Author: Rene Pickhardt (https://ln.rene-pickhardt.de)
-Development of the plugin was sponsored by fulmo.org
-You can also support future work at https://tallyco.in/s/lnbook/
 """
 
 import json
@@ -32,26 +28,25 @@ rpc_interface = None
 plugin = Plugin(autopatch=True)
 
 unit_aliases = {
-    "bitcoin": "BTC",
-    "btc": "BTC",
-    "satoshi": "sat",
-    "satoshis": "sat",
-    "bit": "bit",
-    "bits": "bit",
-    "milli": "mBTC",
-    "mbtc": "mBTC",
-    "millibtc": "mBTC",
-    "B": "BTC",
-    "s": "sat",
-    "m": "mBTC",
-    "b": "bit",
+    "groestlcoin": "GRS",
+    "grs": "GRS",
+    "gro": "gro",
+    "gros": "gro",
+    "groestl": "groestls",
+    "groestls": "groestls",
+    "milli": "mGRS",
+    "mgrs": "mGRS",
+    "milligrs": "mGRS",
+    "GRS": "GRS",
+    "GRO": "gro",
+    "m": "mGRS",
 }
 
 unit_divisor = {
-    "sat": 1,
-    "bit": 100,
-    "mBTC": 100*1000,
-    "BTC": 100*1000*1000,
+    "gro": 1,
+    "groestls": 100,
+    "mGRS": 100*1000,
+    "GRS": 100*1000*1000,
 }
 
 
@@ -60,21 +55,21 @@ def funds(unit=None, plugin=None):
     """Lists the total funds the lightning node owns off- and onchain in {unit}.
 
     {unit} can take the following values:
-    s, satoshi, satoshis to depict satoshis
-    b, bit, bits to depict bits
-    m, milli, btc to depict milliBitcoin
-    B, bitcoin, btc to depict Bitcoins
+    gro, GRO, gros to depict gro
+    groestls, groestl to depict groestls
+    mGRS, mgrs, milli, milligrs, m to depict mGRS
+    GRS, groestlcoin, grs to depict GRS
 
-    When not using Satoshis (default) the comma values are rounded off."""
+    When not using gros (default) the comma values are rounded off."""
 
     plugin.log("call with unit: {}".format(unit), level="debug")
     if unit is None:
         unit = plugin.get_option("funds_display_unit")
 
-    if unit != "B":
-        unit = unit_aliases.get(unit.lower(), "sat")
+    if unit != "G":
+        unit = unit_aliases.get(unit.lower(), "gro")
     else:
-        unit = "BTC"
+        unit = "GRS"
 
     div = unit_divisor.get(unit, 1)
 
